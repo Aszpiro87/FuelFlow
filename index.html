@@ -34,9 +34,9 @@
       <img src="fuel_flow_icon.png" alt="Calculate">
     </div>
     <table id="result" style="display:none;">
-      <tr><th>% Power</th><th>HP</th></tr>
+      <tr><th>Power</th><th>HP</th></tr>
       <tr><td id="pwr"></td><td id="hp"></td></tr>
-      <tr><th>FF ROP (L/h)</th><th>FF LOP (L/h)</th></tr>
+      <tr><th>Fuel Flow ROP</th><th>Fuel Flow LOP</th></tr>
       <tr><td id="rop"></td><td id="lop"></td></tr>
     </table>
   </main>
@@ -93,9 +93,9 @@
       const ffLop = pct<=60?(ffRop*0.9).toFixed(1):"-";
 
       document.getElementById('pwr').textContent = pct.toFixed(1)+"%";
-      document.getElementById('hp').textContent = hp.toFixed(1);
-      document.getElementById('rop').textContent = ffRop.toFixed(1);
-      document.getElementById('lop').textContent = ffLop;
+      document.getElementById("hp").innerHTML = "<b>"+hp.toFixed(1)+"</b> hp";
+      document.getElementById("rop").innerHTML = "<b>"+ffRop.toFixed(1)+"</b> L/h";
+      document.getElementById("lop").innerHTML = (ffLop!="-") ? "<b>"+ffLop+"</b> L/h" : "-";
 
       document.getElementById('result').style.display="table";
     }
