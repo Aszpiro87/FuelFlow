@@ -119,7 +119,7 @@ let lastChanged = null;
 
       const filled = [!isNaN(alt), !isNaN(oat), !isNaN(da)].filter(Boolean).length;
 
-      // Si les 3 champs sont remplis, on garde uniquement celui modifié
+      // Appliquer la logique seulement si lastChanged est défini
       if (filled === 3 && lastChanged) {
         if (lastChanged === "alt") {
           document.getElementById('oat').value = "";
@@ -137,7 +137,6 @@ let lastChanged = null;
           alt = NaN; oat = NaN;
         }
       }
-      // Si 2 champs remplis -> calculer le 3e
       else if (filled === 2) {
         if (!isNaN(alt) && !isNaN(oat) && isNaN(da)) {
           da = calcDA(alt,oat);
@@ -177,6 +176,9 @@ let lastChanged = null;
       if (pct < 60) { bar.style.background = "green"; }
       else if (pct < 75) { bar.style.background = "orange"; }
       else { bar.style.background = "red"; }
+
+      // Réinitialiser lastChanged après calcul manuel
+      lastChanged = null;
     }
   </script>
 </body>
