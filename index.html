@@ -6,6 +6,8 @@
   <meta name="apple-mobile-web-app-title" content="Fuel Flow">
   <link rel="manifest" href="manifest.json">
   <script>
+let lastChanged = null;
+
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('service-worker.js');
     }
@@ -37,11 +39,11 @@
       <label for="rpm"><b>RPM</b></label>
       <input id="rpm" type="text" inputmode="decimal" step="any">
       <label for="alt"><b>Altitude</b> ft</label>
-      <input id="alt" type="text" inputmode="decimal" step="any">
+      <input id="alt" oninput="lastChanged='alt'" type="text" inputmode="decimal" step="any">
       <label for="oat"><b>OAT</b> °C</label>
-      <input id="oat" type="text" inputmode="decimal" step="any">
+      <input id="oat" oninput="lastChanged='oat'" type="text" inputmode="decimal" step="any">
       <label for="da"><b>Density Altitude</b> ft</label>
-      <input id="da" type="text" inputmode="decimal" step="any">
+      <input id="da" oninput="lastChanged='da'" type="text" inputmode="decimal" step="any">
     </div>
     <div class="garmin-button" onclick="calculate()">
       <img src="fuel_flow_icon.png" alt="Calculate">
@@ -60,6 +62,8 @@
   </main>
 
   <script>
+let lastChanged = null;
+
     const bsfc = 0.41;
     const hpMax = 225;
     const table = {
@@ -113,26 +117,22 @@
       let oat = parseFloat(document.getElementById('oat').value);
       let da = parseFloat(document.getElementById('da').value);
 
-      // Priorité : DA > OAT > ALT
-      if (!isNaN(da)) {
-        if (!isNaN(oat) && isNaN(alt)) {
+      if (lastChanged === "da" && !isNaN(da)) {
+        if (!isNaN(oat)) {
           alt = calcAlt(da,oat);
           document.getElementById('alt').value = alt.toFixed(0);
-        }
-        if (!isNaN(alt) && isNaN(oat)) {
+        } else if (!isNaN(alt)) {
           oat = calcOAT(alt,da);
           document.getElementById('oat').value = oat.toFixed(1);
         }
-      } 
-      else if (!isNaN(oat)) {
-        if (!isNaN(alt)) {
-          da = calcDA(alt,oat);
-          document.getElementById('da').value = da.toFixed(0);
-        }
-      } 
-      else if (!isNaN(alt) && !isNaN(da)) {
-        oat = calcOAT(alt,da);
-        document.getElementById('oat').value = oat.toFixed(1);
+      }
+      else if (lastChanged === "oat" && !isNaN(oat) && !isNaN(alt)) {
+        da = calcDA(alt,oat);
+        document.getElementById('da').value = da.toFixed(0);
+      }
+      else if (lastChanged === "alt" && !isNaN(alt) && !isNaN(oat)) {
+        da = calcDA(alt,oat);
+        document.getElementById('da').value = da.toFixed(0);
       }
 
       const daUsed = !isNaN(da) ? da : alt;
