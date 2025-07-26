@@ -6,8 +6,6 @@
   <meta name="apple-mobile-web-app-title" content="Fuel Flow">
   <link rel="manifest" href="manifest.json">
   <script>
-let lastChanged = null;
-
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('service-worker.js');
     }
@@ -39,11 +37,11 @@ let lastChanged = null;
       <label for="rpm"><b>RPM</b></label>
       <input id="rpm" type="text" inputmode="decimal" step="any">
       <label for="alt"><b>Altitude</b> ft</label>
-      <input id="alt" oninput="lastChanged='alt'" type="text" inputmode="decimal" step="any">
+      <input id="alt" type="text" inputmode="decimal" step="any" pattern="-?[0-9]*[.,]?[0-9]*">
       <label for="oat"><b>OAT</b> °C</label>
-      <input id="oat" oninput="lastChanged='oat'" type="text" inputmode="decimal" step="any">
+      <input id="oat" type="text" inputmode="decimal" step="any" pattern="-?[0-9]*[.,]?[0-9]*">
       <label for="da"><b>Density Altitude</b> ft</label>
-      <input id="da" oninput="lastChanged='da'" type="text" inputmode="decimal" step="any">
+      <input id="da" type="text" inputmode="decimal" step="any" pattern="-?[0-9]*[.,]?[0-9]*">
     </div>
     <div class="garmin-button" onclick="calculate()">
       <img src="fuel_flow_icon.png" alt="Calculate">
@@ -62,8 +60,6 @@ let lastChanged = null;
   </main>
 
   <script>
-let lastChanged = null;
-
     const bsfc = 0.41;
     const hpMax = 225;
     const table = {
@@ -105,7 +101,7 @@ let lastChanged = null;
       function calcOAT(pa, da) { return isaTemp(pa) + (da - pa) / 118.8; }
       function calcAlt(da, oat) {
         let pa = 0;
-        for (let a=0;a<=10000;a+=10) {
+        for (let a=-2000;a<=10000;a+=10) {
           if (Math.abs(calcDA(a,oat)-da) < 30) { pa=a; break; }
         }
         return pa;
@@ -117,22 +113,27 @@ let lastChanged = null;
       let oat = parseFloat(document.getElementById('oat').value);
       let da = parseFloat(document.getElementById('da').value);
 
-      if (lastChanged === "da" && !isNaN(da)) {
-        if (!isNaN(oat)) {
+      const filled = [!isNaN(alt), !isNaN(oat), !isNaN(da)].filter(Boolean).length;
+
+      if (filled === 3) {
+        // Si les trois sont remplis et qu'on modifie un champ, on efface les deux autres
+        if (lastChanged === "alt") { document.getElementById('oat').value = ""; document.getElementById('da').value = ""; oat = NaN; da = NaN; }
+        if (lastChanged === "oat") { document.getElementById('alt').value = ""; document.getElementById('da').value = ""; alt = NaN; da = NaN; }
+        if (lastChanged === "da")  { document.getElementById('alt').value = ""; document.getElementById('oat').value = ""; alt = NaN; oat = NaN; }
+      }
+      else if (filled === 2) {
+        if (!isNaN(alt) && !isNaN(oat) && isNaN(da)) {
+          da = calcDA(alt,oat);
+          document.getElementById('da').value = da.toFixed(0);
+        }
+        if (!isNaN(da) && !isNaN(oat) && isNaN(alt)) {
           alt = calcAlt(da,oat);
           document.getElementById('alt').value = alt.toFixed(0);
-        } else if (!isNaN(alt)) {
+        }
+        if (!isNaN(alt) && !isNaN(da) && isNaN(oat)) {
           oat = calcOAT(alt,da);
           document.getElementById('oat').value = oat.toFixed(1);
         }
-      }
-      else if (lastChanged === "oat" && !isNaN(oat) && !isNaN(alt)) {
-        da = calcDA(alt,oat);
-        document.getElementById('da').value = da.toFixed(0);
-      }
-      else if (lastChanged === "alt" && !isNaN(alt) && !isNaN(oat)) {
-        da = calcDA(alt,oat);
-        document.getElementById('da').value = da.toFixed(0);
       }
 
       const daUsed = !isNaN(da) ? da : alt;
