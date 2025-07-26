@@ -33,11 +33,11 @@
   <main>
     <div class="form-grid">
       <label for="map"><b>MAP</b> inHg</label>
-      <input id="map" type="number" step="0.1">
+      <input id="map" type="text" inputmode="decimal" step="any">
       <label for="rpm"><b>RPM</b></label>
-      <input id="rpm" type="number" step="10">
+      <input id="rpm" type="text" inputmode="decimal" step="any">
       <label for="alt"><b>Altitude</b> ft</label>
-      <input id="alt" type="number" step="100">
+      <input id="alt" type="text" inputmode="decimal" step="any">
     </div>
     <div class="garmin-button" onclick="calculate()">
       <img src="fuel_flow_icon.png" alt="Calculate">
