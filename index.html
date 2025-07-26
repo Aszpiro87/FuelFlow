@@ -113,16 +113,24 @@
       let oat = parseFloat(document.getElementById('oat').value);
       let da = parseFloat(document.getElementById('da').value);
 
-      // Mise à jour des valeurs manquantes
-      if (!isNaN(alt) && !isNaN(oat) && isNaN(da)) {
-        da = calcDA(alt,oat);
-        document.getElementById('da').value = da.toFixed(0);
-      }
-      if (!isNaN(da) && !isNaN(oat) && isNaN(alt)) {
-        alt = calcAlt(da,oat);
-        document.getElementById('alt').value = alt.toFixed(0);
-      }
-      if (!isNaN(alt) && !isNaN(da) && isNaN(oat)) {
+      // Priorité : DA > OAT > ALT
+      if (!isNaN(da)) {
+        if (!isNaN(oat) && isNaN(alt)) {
+          alt = calcAlt(da,oat);
+          document.getElementById('alt').value = alt.toFixed(0);
+        }
+        if (!isNaN(alt) && isNaN(oat)) {
+          oat = calcOAT(alt,da);
+          document.getElementById('oat').value = oat.toFixed(1);
+        }
+      } 
+      else if (!isNaN(oat)) {
+        if (!isNaN(alt)) {
+          da = calcDA(alt,oat);
+          document.getElementById('da').value = da.toFixed(0);
+        }
+      } 
+      else if (!isNaN(alt) && !isNaN(da)) {
         oat = calcOAT(alt,da);
         document.getElementById('oat').value = oat.toFixed(1);
       }
