@@ -102,8 +102,7 @@
       function calcAlt(da, oat) {
         let pa = 0;
         for (let a=0;a<=10000;a+=10) {
-          let testDA = calcDA(a, oat);
-          if (Math.abs(testDA-da) < 30) { pa = a; break; }
+          if (Math.abs(calcDA(a,oat)-da) < 30) { pa=a; break; }
         }
         return pa;
       }
@@ -114,28 +113,24 @@
       let oat = parseFloat(document.getElementById('oat').value);
       let da = parseFloat(document.getElementById('da').value);
 
-      // Logique pour calculer les valeurs manquantes
+      // Mise à jour des valeurs manquantes
       if (!isNaN(alt) && !isNaN(oat) && isNaN(da)) {
-        da = calcDA(alt, oat);
+        da = calcDA(alt,oat);
         document.getElementById('da').value = da.toFixed(0);
       }
       if (!isNaN(da) && !isNaN(oat) && isNaN(alt)) {
-        alt = calcAlt(da, oat);
+        alt = calcAlt(da,oat);
         document.getElementById('alt').value = alt.toFixed(0);
       }
       if (!isNaN(alt) && !isNaN(da) && isNaN(oat)) {
-        oat = calcOAT(alt, da);
+        oat = calcOAT(alt,da);
         document.getElementById('oat').value = oat.toFixed(1);
       }
 
       const daUsed = !isNaN(da) ? da : alt;
 
-      const map = parseFloat(document.getElementById('map').value);
-      const rpm = parseFloat(document.getElementById('rpm').value);
-      const alt = parseFloat(document.getElementById('alt').value);
-
       const pctStock = getPercentPower(rpm,map);
-      const loss = getLoss(alt);
+      const loss = getLoss(daUsed);
 
       const hpStockCorr = 180*pctStock/100 - loss;
       const hp = hpStockCorr * (225/180);
