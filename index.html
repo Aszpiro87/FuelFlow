@@ -37,7 +37,8 @@
       <tr><th colspan="2">Fuel Flow</th></tr>
       <tr><th>ROP</th><th>LOP</th></tr>
       <tr><td id="rop"></td><td id="lop"></td></tr>
-      <tr><th colspan="2">Engine Power</th></tr>
+      <tr><th colspan="2">Power</th></tr>
+      <tr><th>%</th><th>hp</th></tr>
       <tr><td id="pwr"></td><td id="hp"></td></tr>
     </table>
   </main>
@@ -93,8 +94,8 @@
       const ffRop = hp*bsfc/6*3.785;
       const ffLop = pct<=60?(ffRop*0.9).toFixed(1):"-";
 
-      document.getElementById("pwr").innerHTML = "<b>"+pct.toFixed(1)+"</b> %";
-      document.getElementById("hp").innerHTML = "<b>"+hp.toFixed(1)+"</b> hp";
+      document.getElementById("pwr").innerHTML = "<b>"+pct.toFixed(1)+"</b>";
+      document.getElementById("hp").innerHTML = "<b>"+hp.toFixed(1)+"</b>";
       document.getElementById("rop").innerHTML = "<b>"+ffRop.toFixed(1)+"</b> L/h";
       document.getElementById("lop").innerHTML = (ffLop!="-") ? "<b>"+ffLop+"</b> L/h" : "-";
 
