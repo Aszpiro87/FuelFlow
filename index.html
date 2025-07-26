@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Racing IO-360-B1B</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="apple-touch-icon" href="fuel_flow_icon.png">
+  <style>
+    body { background:#1a1a1a; color:#fff; font-family:Arial,sans-serif; margin:0; padding:0; }
+    header { background:#232323; padding:14px; text-align:center; font-weight:bold; font-size:20px; border-bottom:1px solid #444; }
+    main { display:flex; flex-direction:column; align-items:center; padding:20px; }
+    .form-grid { background:#2a2a2a; border:1px solid #444; border-radius:10px; padding:20px; max-width:400px; width:100%; display:grid; gap:12px; }
+    label { text-align:left; font-size:14px; }
+    input { padding:10px; background:#1a1a1a; border:1px solid #444; border-radius:6px; color:#fff; font-size:16px; }
+    .garmin-button { margin-top:25px; padding:14px; background:#2a2a2a; border-radius:12px; border:1px solid #444; cursor:pointer; display:flex; justify-content:center; }
+    .garmin-button img { width:80px; height:80px; }
+    table { margin-top:24px; border-collapse:collapse; width:100%; max-width:400px; }
+    th,td { border:1px solid #444; padding:10px; text-align:center; font-size:16px; }
+    th { background:#2c2c2c; }
+  </style>
+</head>
+<body>
+  <header>Racing IO-360-B1B</header>
+  <main>
+    <div class="form-grid">
+      <label for="map">MAP (inHg)</label>
+      <input id="map" type="number" step="0.1">
+      <label for="rpm">RPM</label>
+      <input id="rpm" type="number" step="10">
+      <label for="alt">Altitude (ft)</label>
+      <input id="alt" type="number" step="100">
+    </div>
+    <div class="garmin-button" onclick="calculate()">
+      <img src="fuel_flow_icon.png" alt="Calculate">
+    </div>
+    <table id="result" style="display:none;">
+      <tr><th>% Power</th><th>HP</th></tr>
+      <tr><td id="pwr"></td><td id="hp"></td></tr>
+      <tr><th>FF ROP (L/h)</th><th>FF LOP (L/h)</th></tr>
+      <tr><td id="rop"></td><td id="lop"></td></tr>
+    </table>
+  </main>
+
+  <script>
+    const bsfc = 0.41;
+    const hpMax = 225;
+    const table = {
+  2400: {20.5: 55, 21.65: 60, 22.8: 65, 23.95: 70, 25.1: 75, 25.88: 80, 26.66: 85, 27.44: 90, 28.22: 95, 29.0: 100},
+  2500: {20.0: 55, 21.12: 60, 22.25: 65, 23.38: 70, 24.5: 75, 25.4: 80, 26.3: 85, 27.2: 90, 28.1: 95, 29.0: 100},
+  2600: {19.5: 55, 20.6: 60, 21.7: 65, 22.8: 70, 23.9: 75, 24.92: 80, 25.94: 85, 26.96: 90, 27.98: 95, 29.0: 100},
+  2700: {19.2: 55, 20.25: 60, 21.3: 65, 22.35: 70, 23.4: 75, 24.52: 80, 25.64: 85, 26.76: 90, 27.88: 95, 29.0: 100},
+};
+    const lossTable = {0:0, 2000:2, 4000:4, 6000:6, 8000:8, 10000:12};
+
+    function interp(x,x1,x2,y1,y2) {
+      if (x1===x2) return y1;
+      return y1+(y2-y1)*(x-x1)/(x2-x1);
+    }
+
+    function getPercentPower(rpm,map) {
+      const rpms = Object.keys(table).map(Number).sort((a,b)=>a-b);
+      let r1=rpms[0], r2=rpms[rpms.length-1];
+      for (let i=0;i<rpms.length;i++) { if (rpms[i]<=rpm) r1=rpms[i]; if (rpms[i]>=rpm) { r2=rpms[i]; break; } }
+      function getPct(r,m) {
+        const maps = Object.keys(table[r]).map(Number).sort((a,b)=>a-b);
+        let m1=maps[0], m2=maps[maps.length-1];
+        for (let j=0;j<maps.length;j++) { if (maps[j]<=m) m1=maps[j]; if (maps[j]>=m) { m2=maps[j]; break; } }
+        return interp(m,m1,m2,table[r][m1],table[r][m2]);
+      }
+      return interp(rpm,r1,r2,getPct(r1,map),getPct(r2,map));
+    }
+
+    function getLoss(alt) {
+      const alts = Object.keys(lossTable).map(Number).sort((a,b)=>a-b);
+      let a1=alts[0],a2=alts[alts.length-1];
+      for (let i=0;i<alts.length;i++) { if (alts[i]<=alt) a1=alts[i]; if (alts[i]>=alt) { a2=alts[i]; break; } }
+      return interp(alt,a1,a2,lossTable[a1],lossTable[a2]);
+    }
+
+    function calculate() {
+      const map = parseFloat(document.getElementById('map').value);
+      const rpm = parseFloat(document.getElementById('rpm').value);
+      const alt = parseFloat(document.getElementById('alt').value);
+
+      const pctStock = getPercentPower(rpm,map);
+      const loss = getLoss(alt);
+
+      const hpStockCorr = 180*pctStock/100 - loss;
+      const hp = hpStockCorr * (225/180);
+      const pct = (hp/hpMax)*100;
+
+      const ffRop = hp*bsfc/6*3.785;
+      const ffLop = pct<=60?(ffRop*0.9).toFixed(1):"-";
+
+      document.getElementById('pwr').textContent = pct.toFixed(1)+"%";
+      document.getElementById('hp').textContent = hp.toFixed(1);
+      document.getElementById('rop').textContent = ffRop.toFixed(1);
+      document.getElementById('lop').textContent = ffLop;
+
+      document.getElementById('result').style.display="table";
+    }
+  </script>
+</body>
+</html>
