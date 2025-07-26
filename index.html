@@ -38,6 +38,10 @@
       <input id="rpm" type="text" inputmode="decimal" step="any">
       <label for="alt"><b>Altitude</b> ft</label>
       <input id="alt" type="text" inputmode="decimal" step="any">
+      <label for="oat"><b>OAT</b> °C</label>
+      <input id="oat" type="text" inputmode="decimal" step="any">
+      <label for="da"><b>Density Altitude</b> ft</label>
+      <input id="da" type="text" inputmode="decimal" step="any">
     </div>
     <div class="garmin-button" onclick="calculate()">
       <img src="fuel_flow_icon.png" alt="Calculate">
@@ -92,6 +96,19 @@
     }
 
     function calculate() {
+      function isaTemp(alt_ft) { return 15 - 0.0019812 * alt_ft * 3.28084; }
+      function calcDA(pa, oat) { return pa + 118.8 * (oat - isaTemp(pa)); }
+      function calcOAT(pa, da) { return isaTemp(pa) + (da - pa) / 118.8; }
+      function calcAlt(da, oat) {
+        // recherche approximative de l'altitude pour DA et OAT donnés
+        let pa = 0;
+        for (let a=0;a<=10000;a+=10) {
+          let testDA = calcDA(a, oat);
+          if (Math.abs(testDA-da)<50) { pa=a; break; }
+        }
+        return pa;
+      }
+
       const map = parseFloat(document.getElementById('map').value);
       const rpm = parseFloat(document.getElementById('rpm').value);
       const alt = parseFloat(document.getElementById('alt').value);
