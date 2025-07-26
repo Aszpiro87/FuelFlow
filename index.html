@@ -37,11 +37,11 @@
       <label for="rpm"><b>RPM</b></label>
       <input id="rpm" type="text" inputmode="decimal" step="any">
       <label for="alt"><b>Altitude</b> ft</label>
-<input id="alt" type="text" inputmode="decimal" step="any" oninput="lastChanged='alt'; updateFields();">
+<input id="alt" type="text" inputmode="decimal" step="any" oninput="lastChanged='alt'; scheduleUpdate();">
 <label for="oat"><b>OAT</b> °C</label>
-<input id="oat" type="text" inputmode="decimal" step="any" oninput="lastChanged='oat'; updateFields();">
+<input id="oat" type="text" inputmode="decimal" step="any" oninput="lastChanged='oat'; scheduleUpdate();">
 <label for="da"><b>Density Altitude</b> ft</label>
-<input id="da" type="text" inputmode="decimal" step="any" oninput="lastChanged='da'; updateFields();">
+<input id="da" type="text" inputmode="decimal" step="any" oninput="lastChanged='da'; scheduleUpdate();">
     </div>
     <div class="garmin-button" onclick="calculate()">
       <img src="fuel_flow_icon.png" alt="Calculate">
@@ -97,6 +97,13 @@
 
     
 let lastChanged = null;
+let updateTimer = null;
+
+function scheduleUpdate() {
+  if (updateTimer) clearTimeout(updateTimer);
+  updateTimer = setTimeout(() => { updateFields(); }, 500);
+}
+
 
 function isaTemp(alt_ft) { return 15 - 0.0019812 * alt_ft * 3.28084; }
 function calcDA(pa, oat) { return pa + 118.8 * (oat - isaTemp(pa)); }
