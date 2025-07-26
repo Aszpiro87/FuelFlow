@@ -6,6 +6,8 @@
   <meta name="apple-mobile-web-app-title" content="Fuel Flow">
   <link rel="manifest" href="manifest.json">
   <script>
+let lastChanged = null;
+
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('service-worker.js');
     }
@@ -37,11 +39,11 @@
       <label for="rpm"><b>RPM</b></label>
       <input id="rpm" type="text" inputmode="decimal" step="any">
       <label for="alt"><b>Altitude</b> ft</label>
-      <input id="alt" type="text" inputmode="decimal" step="any" pattern="-?[0-9]*[.,]?[0-9]*">
+      <input id="alt" oninput="lastChanged='alt'" type="text" inputmode="decimal" step="any" pattern="-?[0-9]*[.,]?[0-9]*">
       <label for="oat"><b>OAT</b> °C</label>
-      <input id="oat" type="text" inputmode="decimal" step="any" pattern="-?[0-9]*[.,]?[0-9]*">
+      <input id="oat" oninput="lastChanged='oat'" type="text" inputmode="decimal" step="any" pattern="-?[0-9]*[.,]?[0-9]*">
       <label for="da"><b>Density Altitude</b> ft</label>
-      <input id="da" type="text" inputmode="decimal" step="any" pattern="-?[0-9]*[.,]?[0-9]*">
+      <input id="da" oninput="lastChanged='da'" type="text" inputmode="decimal" step="any" pattern="-?[0-9]*[.,]?[0-9]*">
     </div>
     <div class="garmin-button" onclick="calculate()">
       <img src="fuel_flow_icon.png" alt="Calculate">
@@ -60,6 +62,8 @@
   </main>
 
   <script>
+let lastChanged = null;
+
     const bsfc = 0.41;
     const hpMax = 225;
     const table = {
@@ -115,12 +119,25 @@
 
       const filled = [!isNaN(alt), !isNaN(oat), !isNaN(da)].filter(Boolean).length;
 
-      if (filled === 3) {
-        // Si les trois sont remplis et qu'on modifie un champ, on efface les deux autres
-        if (lastChanged === "alt") { document.getElementById('oat').value = ""; document.getElementById('da').value = ""; oat = NaN; da = NaN; }
-        if (lastChanged === "oat") { document.getElementById('alt').value = ""; document.getElementById('da').value = ""; alt = NaN; da = NaN; }
-        if (lastChanged === "da")  { document.getElementById('alt').value = ""; document.getElementById('oat').value = ""; alt = NaN; oat = NaN; }
+      // Si les 3 champs sont remplis, on garde uniquement celui modifié
+      if (filled === 3 && lastChanged) {
+        if (lastChanged === "alt") {
+          document.getElementById('oat').value = "";
+          document.getElementById('da').value = "";
+          oat = NaN; da = NaN;
+        }
+        if (lastChanged === "oat") {
+          document.getElementById('alt').value = "";
+          document.getElementById('da').value = "";
+          alt = NaN; da = NaN;
+        }
+        if (lastChanged === "da") {
+          document.getElementById('alt').value = "";
+          document.getElementById('oat').value = "";
+          alt = NaN; oat = NaN;
+        }
       }
+      // Si 2 champs remplis -> calculer le 3e
       else if (filled === 2) {
         if (!isNaN(alt) && !isNaN(oat) && isNaN(da)) {
           da = calcDA(alt,oat);
