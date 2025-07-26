@@ -1,0 +1,15 @@
+{
+  "name": "Fuel Flow",
+  "short_name": "Fuel Flow",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#1a1a1a",
+  "theme_color": "#1a1a1a",
+  "icons": [
+    {
+      "src": "fuel_flow_icon.png",
+      "sizes": "1024x1024",
+      "type": "image/png"
+    }
+  ]
+}
