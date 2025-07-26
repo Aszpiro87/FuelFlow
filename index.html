@@ -100,6 +100,42 @@
       function calcDA(pa, oat) { return pa + 118.8 * (oat - isaTemp(pa)); }
       function calcOAT(pa, da) { return isaTemp(pa) + (da - pa) / 118.8; }
       function calcAlt(da, oat) {
+        let pa = 0;
+        for (let a=0;a<=10000;a+=10) {
+          let testDA = calcDA(a, oat);
+          if (Math.abs(testDA-da)<30) { pa=a; break; }
+        }
+        return pa;
+      }
+
+      let alt = parseFloat(document.getElementById('alt').value);
+      let oat = parseFloat(document.getElementById('oat').value);
+      let da = parseFloat(document.getElementById('da').value);
+
+      // Cas 1 : Alt + OAT → calculer et afficher DA
+      if (!isNaN(alt) && !isNaN(oat) && isNaN(da)) {
+        da = calcDA(alt, oat);
+        document.getElementById('da').value = da.toFixed(0);
+      }
+      // Cas 2 : DA seule → on garde DA
+      // Cas 3 : DA + OAT → calculer et afficher Alt
+      if (!isNaN(da) && !isNaN(oat) && isNaN(alt)) {
+        alt = calcAlt(da, oat);
+        document.getElementById('alt').value = alt.toFixed(0);
+      }
+      // Cas 4 : Alt + DA → calculer et afficher OAT
+      if (!isNaN(alt) && !isNaN(da) && isNaN(oat)) {
+        oat = calcOAT(alt, da);
+        document.getElementById('oat').value = oat.toFixed(1);
+      }
+
+      // Déterminer la valeur à utiliser pour la correction
+      let daUsed = !isNaN(da) ? da : alt;
+
+      function isaTemp(alt_ft) { return 15 - 0.0019812 * alt_ft * 3.28084; }
+      function calcDA(pa, oat) { return pa + 118.8 * (oat - isaTemp(pa)); }
+      function calcOAT(pa, da) { return isaTemp(pa) + (da - pa) / 118.8; }
+      function calcAlt(da, oat) {
         // recherche approximative de l'altitude pour DA et OAT donnés
         let pa = 0;
         for (let a=0;a<=10000;a+=10) {
