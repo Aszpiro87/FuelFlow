@@ -26,7 +26,11 @@
     table { margin-top:24px; border-collapse:collapse; width:100%; max-width:400px; }
     th,td { border:1px solid #444; padding:10px; text-align:center; font-size:16px; }
     th { background:#2c2c2c; }
-  </style>
+  
+.garmin-button.ready {
+  background: green !important;
+}
+</style>
 </head>
 <body>
   <header>Racing IO-360-B1B</header>
@@ -120,8 +124,10 @@ function checkInputsAndPrepare() {
   if (missing) {
     document.getElementById('result').style.display = "none";
     document.querySelector('#powerBar').parentElement.parentElement.style.display = 'none';
+    document.querySelector('.garmin-button').classList.remove('ready');
     return true;
   }
+  document.querySelector('.garmin-button').classList.add('ready');
   return false;
 }
 
