@@ -47,11 +47,12 @@ document.getElementById('da').addEventListener('input', (e) => {
     const oat = parseFloat(document.getElementById('oat').value);
 
     if (!isNaN(alt) && !isNaN(oat)) {
-      const da = calcDA(alt, oat).toFixed(0);
-      document.getElementById('da').value = da;
+      document.getElementById('da').value = calcDA(alt, oat).toFixed(0);
     }
-    checkInputsAndPrepare();
+
+    updateFields(); // On relance toute la logique
   });
+});
 });
 
 </script>
@@ -197,11 +198,12 @@ document.getElementById('da').addEventListener('input', (e) => {
     const oat = parseFloat(document.getElementById('oat').value);
 
     if (!isNaN(alt) && !isNaN(oat)) {
-      const da = calcDA(alt, oat).toFixed(0);
-      document.getElementById('da').value = da;
+      document.getElementById('da').value = calcDA(alt, oat).toFixed(0);
     }
-    checkInputsAndPrepare();
+
+    updateFields(); // On relance toute la logique
   });
+});
 });
 
 </script>
