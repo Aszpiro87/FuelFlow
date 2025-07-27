@@ -184,7 +184,7 @@ const daUsed = !isNaN(daVal) ? daVal : (!isNaN(altVal) ? altVal : NaN);
 
 function calculate() {
   doCalculation();       
-  lastCalcValues = getCurrentValues(); // Force la mise à jour mémoire
+  lastCalcValues = getCurrentValues(); 
   checkReadyToCalculate(); 
 }
 
@@ -194,12 +194,17 @@ function calculate() {
 let lastCalcValues = null;
 
 function getCurrentValues() {
+  function parseOrNull(id) {
+    const v = parseFloat(document.getElementById(id).value);
+    return isNaN(v) ? null : v;
+  }
   return {
-    map: parseFloat(document.getElementById('map').value),
-    rpm: parseFloat(document.getElementById('rpm').value),
-    alt: parseFloat(document.getElementById('alt').value),
-    da:  parseFloat(document.getElementById('da').value)
+    map: parseOrNull('map'),
+    rpm: parseOrNull('rpm'),
+    alt: parseOrNull('alt'),
+    da:  parseOrNull('da')
   };
+};
 }
 
 function valuesEqual(v1, v2) {
