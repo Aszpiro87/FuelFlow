@@ -13,9 +13,16 @@
   
 function toggleSign(id) {
   const el = document.getElementById(id);
+  const pos = el.selectionStart; // mémorise la position du curseur
   if (el.value.startsWith('-')) {
     el.value = el.value.slice(1);
   } else {
+    el.value = '-' + el.value;
+  }
+  el.focus(); // garde le focus
+  el.setSelectionRange(pos, pos); // remet le curseur à la bonne position
+  checkReadyToCalculate();
+} else {
     el.value = '-' + el.value;
   }
   checkReadyToCalculate();
@@ -44,9 +51,9 @@ function toggleSign(id) {
 <main>
 <div class="form-grid">
 <label for="map"><b>MAP</b> inHg</label>
-<input id="map" inputmode="text" step="any" type="text"/>
+<input id="map" inputmode="decimal" step="any" type="text">
 <label for="rpm"><b>RPM</b></label>
-<input id="rpm" inputmode="text" step="any" type="text"/>
+<input id="rpm" inputmode="decimal" step="any" type="text">
 <label for="alt"><b>Altitude ft</b></label><div style="display:flex;"><input id="alt" inputmode="decimal" type="text" style="flex:1;border-top-right-radius:0;border-bottom-right-radius:0;"><button type="button" onclick="toggleSign('alt')" style="background:#1a1a1a;border:1px solid #444;border-left:none;border-top-right-radius:6px;border-bottom-right-radius:6px;color:#fff;width:30px;cursor:pointer;font-size:14px;">±</button></div>
 <label for="oat"><b>OAT °C</b></label><div style="display:flex;"><input id="oat" inputmode="decimal" type="text" style="flex:1;border-top-right-radius:0;border-bottom-right-radius:0;"><button type="button" onclick="toggleSign('oat')" style="background:#1a1a1a;border:1px solid #444;border-left:none;border-top-right-radius:6px;border-bottom-right-radius:6px;color:#fff;width:30px;cursor:pointer;font-size:14px;">±</button></div>
 <label for="da"><b>Density Altitude ft</b></label><div style="display:flex;"><input id="da" inputmode="decimal" type="text" style="flex:1;border-top-right-radius:0;border-bottom-right-radius:0;"><button type="button" onclick="toggleSign('da')" style="background:#1a1a1a;border:1px solid #444;border-left:none;border-top-right-radius:6px;border-bottom-right-radius:6px;color:#fff;width:30px;cursor:pointer;font-size:14px;">±</button></div>
