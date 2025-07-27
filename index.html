@@ -147,8 +147,8 @@ function doCalculation() {
   // Vérifier si valeurs minimales dispo
   if (isNaN(map) || isNaN(rpm) || (isNaN(alt) && isNaN(da))) {
     document.getElementById('result').style.display="none";
-    return;
-  document.querySelector('#powerBar').parentElement.parentElement.style.display = 'none';
+      document.querySelector('#powerBar').parentElement.parentElement.style.display = 'none';
+  return;
   }
 
   const daUsed = !isNaN(da) ? da : alt;
