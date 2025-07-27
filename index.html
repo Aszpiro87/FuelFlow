@@ -109,6 +109,22 @@ function calcAlt(da, oat) {
 }
 
 
+function checkInputsAndPrepare() {
+  const map = parseFloat(document.getElementById('map').value);
+  const rpm = parseFloat(document.getElementById('rpm').value);
+  const alt = document.getElementById('alt').value.trim();
+  const da  = document.getElementById('da').value.trim();
+
+  const missing = (isNaN(map) || isNaN(rpm) || (alt === "" && da === ""));
+
+  if (missing) {
+    document.getElementById('result').style.display = "none";
+    document.querySelector('#powerBar').parentElement.parentElement.style.display = 'none';
+    return true;
+  }
+  return false;
+}
+
 function updateFields() {
   let altField = document.getElementById('alt');
   let oatField = document.getElementById('oat');
@@ -139,9 +155,11 @@ function updateFields() {
     if (!isNaN(da)  && !isNaN(oat) && isNaN(alt)) altField.value = calcAlt(da,oat).toFixed(0);
     if (!isNaN(alt) && !isNaN(da)  && isNaN(oat)) oatField.value = calcOAT(alt,da).toFixed(1);
   }
+  checkInputsAndPrepare();
 }
 
 function doCalculation() {
+  if (checkInputsAndPrepare()) return;
   const map = parseFloat(document.getElementById('map').value);
   const rpm = parseFloat(document.getElementById('rpm').value);
   let alt = parseFloat(document.getElementById('alt').value);
