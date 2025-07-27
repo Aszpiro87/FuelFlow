@@ -190,10 +190,10 @@ let lastCalcValues = null;
 
 function getCurrentValues() {
   return {
-    map: parseFloat(document.getElementById('map').value) || null,
-    rpm: parseFloat(document.getElementById('rpm').value) || null,
-    alt: parseFloat(document.getElementById('alt').value) || null,
-    da:  parseFloat(document.getElementById('da').value)  || null
+    map: parseFloat(document.getElementById('map').value),
+    rpm: parseFloat(document.getElementById('rpm').value),
+    alt: parseFloat(document.getElementById('alt').value),
+    da:  parseFloat(document.getElementById('da').value)
   };
 }
 
@@ -206,10 +206,20 @@ function checkReadyToCalculate() {
   const btn = document.querySelector('.garmin-button');
   const v = getCurrentValues();
 
-  if (!isNaN(v.map) && !isNaN(v.rpm) && (!isNaN(v.alt) || !isNaN(v.da))) {
+  const hasMap = !isNaN(v.map);
+  const hasRpm = !isNaN(v.rpm);
+  const hasAltOrDa = (!isNaN(v.alt) || !isNaN(v.da));
+
+  if (hasMap && hasRpm && hasAltOrDa) {
     if (!lastCalcValues || !valuesEqual(v, lastCalcValues)) {
       btn.style.background = "green";
     } else {
+      btn.style.background = "#2a2a2a";
+    }
+  } else {
+    btn.style.background = "#2a2a2a";
+  }
+} else {
       btn.style.background = "#2a2a2a";
     }
   } else {
@@ -228,7 +238,6 @@ document.getElementById('da').addEventListener('input', function() {
   lastChanged = "da"; updateFields();
 });
 </script>
-
 <script>
 ['map','rpm','alt','oat','da'].forEach(id=>{
   document.getElementById(id).addEventListener('input', checkReadyToCalculate);
