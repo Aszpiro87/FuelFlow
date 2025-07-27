@@ -191,12 +191,11 @@ let lastCalcValues = null;
 
 function getCurrentValues() {
   return {
-    map: getNumericValue(document.getElementById('map').value),
-    rpm: getNumericValue(document.getElementById('rpm').value),
-    alt: getNumericValue(document.getElementById('alt').value),
-    da:  getNumericValue(document.getElementById('da').value)
+    map: parseFloat(document.getElementById('map').value),
+    rpm: parseFloat(document.getElementById('rpm').value),
+    alt: parseFloat(document.getElementById('alt').value),
+    da:  parseFloat(document.getElementById('da').value)
   };
-};
 }
 
 function valuesEqual(v1, v2) {
@@ -306,7 +305,7 @@ function inRange(val, min, max) {
 
 function validateField(id) {
   const el = document.getElementById(id);
-  let val = getNumericValue(el.value);
+  let val = parseFloat(el.value);
   let [min, max] = ranges[id] || [null, null];
   if (min !== null && (!inRange(val, min, max))) {
     el.style.color = "red";
