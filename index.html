@@ -151,7 +151,9 @@ function doCalculation() {
   return;
   }
 
-  const daUsed = !isNaN(da) ? da : alt;
+  const daVal = getNumericValue(document.getElementById('da').value);
+const altVal = getNumericValue(document.getElementById('alt').value);
+const daUsed = !isNaN(daVal) ? daVal : (!isNaN(altVal) ? altVal : NaN);
 
   const pctStock = getPercentPower(rpm,map);
   const loss = getLoss(daUsed);
