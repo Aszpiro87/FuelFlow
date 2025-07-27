@@ -191,11 +191,12 @@ let lastCalcValues = null;
 
 function getCurrentValues() {
   return {
-    map: parseFloat(document.getElementById('map').value),
-    rpm: parseFloat(document.getElementById('rpm').value),
-    alt: parseFloat(document.getElementById('alt').value),
-    da:  parseFloat(document.getElementById('da').value)
+    map: getNumericValue(document.getElementById('map').value),
+    rpm: getNumericValue(document.getElementById('rpm').value),
+    alt: getNumericValue(document.getElementById('alt').value),
+    da:  getNumericValue(document.getElementById('da').value)
   };
+};
 }
 
 function valuesEqual(v1, v2) {
