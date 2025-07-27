@@ -360,5 +360,70 @@ doCalculation = function() {
   oldDoCalc();
 };
 </script>
+
+<script>
+function formatThousands(val) {
+  val = val.replace(/[^0-9-]/g, '');
+  let negative = val.startsWith('-');
+  if (negative) val = '-' + val.slice(1).replace(/-/g,'');
+  let num = negative ? val.slice(1) : val;
+
+  if (num.length <= 3) return val;
+  let main = num.slice(0, num.length-3);
+  let last = num.slice(-3);
+  return (negative ? '-' : '') + main + ' ' + last;
+}
+
+function cleanNumber(val) {
+  return parseFloat(val.replace(/ /g,'')) || NaN;
+}
+
+['alt','da'].forEach(id=>{
+  const el = document.getElementById(id);
+  el.addEventListener('input', function(){
+    let caretPos = this.selectionStart;
+    let raw = this.value.replace(/ /g,'');
+    this.value = formatThousands(raw);
+    this.setSelectionRange(this.value.length, this.value.length); 
+    checkReadyToCalculate();
+  });
+});
+
+// Surcharge getCurrentValues pour enlever les espaces
+function getCurrentValues() {
+  return {
+    map: parseFloat(document.getElementById('map').value),
+    rpm: parseFloat(document.getElementById('rpm').value),
+    alt: cleanNumber(document.getElementById('alt').value),
+    da:  cleanNumber(document.getElementById('da').value)
+  };
+}
+
+// Surcharge doCalculation pour utiliser les valeurs nettoyées
+const oldDoCalc = doCalculation;
+doCalculation = function() {
+  const map = parseFloat(document.getElementById('map').value);
+  const rpm = parseFloat(document.getElementById('rpm').value);
+  const alt = cleanNumber(document.getElementById('alt').value);
+  const da  = cleanNumber(document.getElementById('da').value);
+
+  if (isNaN(map) || isNaN(rpm) || (isNaN(alt) && isNaN(da))) {
+    document.getElementById('result').style.display="none";
+    document.querySelector('#powerBar').parentElement.parentElement.style.display = 'none';
+    return;
+  }
+
+  const daUsed = !isNaN(da) ? da : (!isNaN(alt) ? alt : NaN);
+
+  if (isNaN(daUsed)) {
+    document.getElementById('result').style.display="none";
+    document.querySelector('#powerBar').parentElement.parentElement.style.display = 'none';
+    return;
+  }
+
+  // Exécuter le calcul original
+  oldDoCalc();
+};
+</script>
 </body>
 </html>
