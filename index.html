@@ -219,12 +219,6 @@ function checkReadyToCalculate() {
   } else {
     btn.style.background = "#2a2a2a";
   }
-} else {
-      btn.style.background = "#2a2a2a";
-    }
-  } else {
-    btn.style.background = "#2a2a2a";
-  }
 }
 </script>
 <script>
@@ -238,6 +232,7 @@ document.getElementById('da').addEventListener('input', function() {
   lastChanged = "da"; updateFields();
 });
 </script>
+
 <script>
 ['map','rpm','alt','oat','da'].forEach(id=>{
   document.getElementById(id).addEventListener('input', checkReadyToCalculate);
