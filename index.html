@@ -9,7 +9,54 @@
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('service-worker.js');
     }
-  </script>
+  
+document.querySelectorAll('#map, #rpm, #alt, #da').forEach(el => {
+  el.addEventListener('input', () => {
+    checkInputsAndPrepare();
+  });
+});
+
+document.querySelectorAll('#map, #rpm, #alt, #da, #oat').forEach(el => {
+  el.addEventListener('input', (e) => {
+    const allowed = /^-?[0-9]*[\.,]?[0-9]*$/;
+    if (!allowed.test(e.target.value)) {
+      e.target.value = e.target.value.replace(/[^0-9\.,-]/g, '');
+    }
+    if (el.value.length > el.maxLength) {
+      el.value = el.value.slice(0, el.maxLength);
+    }
+    checkInputsAndPrepare();
+  });
+});
+
+
+
+
+
+document.getElementById('da').addEventListener('input', (e) => {
+  if (e.target.value.length === 1) {
+    document.getElementById('alt').value = "";
+    document.getElementById('oat').value = "";
+  }
+});
+
+
+['alt', 'oat'].forEach(id => {
+  document.getElementById(id).addEventListener('input', () => {
+    const alt = parseFloat(document.getElementById('alt').value);
+    const oat = parseFloat(document.getElementById('oat').value);
+
+    if (!isNaN(alt) && !isNaN(oat)) {
+      document.getElementById('da').value = calcDA(alt, oat).toFixed(0);
+    }
+
+    updateFields(); // On relance toute la logique
+  });
+});
+});
+
+</script>
+
   <meta charset="UTF-8">
   <title>Racing IO-360-B1B</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -26,22 +73,26 @@
     table { margin-top:24px; border-collapse:collapse; width:100%; max-width:400px; }
     th,td { border:1px solid #444; padding:10px; text-align:center; font-size:16px; }
     th { background:#2c2c2c; }
-  </style>
+  
+.garmin-button.ready {
+  background: green !important;
+}
+</style>
 </head>
 <body>
   <header>Racing IO-360-B1B</header>
   <main>
     <div class="form-grid">
       <label for="map"><b>MAP</b> inHg</label>
-      <input id="map" type="text" inputmode="text" step="any">
+      <input id="map" type="text" inputmode="text" step="any" maxlength="4" pattern="[-0-9\.,]*">
       <label for="rpm"><b>RPM</b></label>
-      <input id="rpm" type="text" inputmode="text" step="any">
+      <input id="rpm" type="text" inputmode="text" step="any" maxlength="4" pattern="[-0-9\.,]*">
       <label for="alt"><b>Altitude</b> ft</label>
-<input id="alt" type="text" inputmode="text" step="any" pattern="-?[0-9]*[.,]?[0-9]*" onchange="lastChanged='alt'; updateFields();">
+<input id="alt" type="text" inputmode="text" step="any" pattern="-?[0-9]*[.,]?[0-9]*" onchange="lastChanged='alt'; updateFields();" maxlength="5" pattern="[-0-9\.,]*">
 <label for="oat"><b>OAT</b> °C</label>
-<input id="oat" type="text" inputmode="text" step="any" pattern="-?[0-9]*[.,]?[0-9]*" onchange="lastChanged='oat'; updateFields();">
+<input id="oat" type="text" inputmode="text" step="any" pattern="-?[0-9]*[.,]?[0-9]*" onchange="lastChanged='oat'; updateFields();" maxlength="3" pattern="[-0-9\.,]*">
 <label for="da"><b>Density Altitude</b> ft</label>
-<input id="da" type="text" inputmode="text" step="any" pattern="-?[0-9]*[.,]?[0-9]*" onchange="lastChanged='da'; updateFields();">
+<input id="da" type="text" inputmode="text" step="any" pattern="-?[0-9]*[.,]?[0-9]*" onchange="lastChanged='da'; updateFields();" maxlength="5" pattern="[-0-9\.,]*">
     </div>
     <div class="garmin-button" onclick="calculate()">
       <img src="fuel_flow_icon.png" alt="Calculate">
@@ -109,82 +160,53 @@ function calcAlt(da, oat) {
 }
 
 
-function updateFields() {
-  let altField = document.getElementById('alt');
-  let oatField = document.getElementById('oat');
-  let daField  = document.getElementById('da');
-
-  let alt = parseFloat(altField.value);
-  let oat = parseFloat(oatField.value);
-  let da  = parseFloat(daField.value);
-
-  // Si l'utilisateur vient de supprimer une valeur -> on ne recalcule rien
-  if ((lastChanged === "alt" && altField.value === "") ||
-      (lastChanged === "oat" && oatField.value === "") ||
-      (lastChanged === "da"  && daField.value  === "")) {
-    return;
-  }
-
-  const filled = [!isNaN(alt), !isNaN(oat), !isNaN(da)].filter(Boolean).length;
-
-  if (filled === 3) {
-    if (lastChanged === "alt") { oatField.value = ""; daField.value = ""; }
-    if (lastChanged === "oat") { altField.value = ""; daField.value = ""; }
-    if (lastChanged === "da")  { altField.value = ""; oatField.value = ""; }
-    return;
-  }
-
-  if (filled === 2) {
-    if (!isNaN(alt) && !isNaN(oat) && isNaN(da)) daField.value = calcDA(alt,oat).toFixed(0);
-    if (!isNaN(da)  && !isNaN(oat) && isNaN(alt)) altField.value = calcAlt(da,oat).toFixed(0);
-    if (!isNaN(alt) && !isNaN(da)  && isNaN(oat)) oatField.value = calcOAT(alt,da).toFixed(1);
-  }
-}
-
-function doCalculation() {
+function checkInputsAndPrepare() {
   const map = parseFloat(document.getElementById('map').value);
   const rpm = parseFloat(document.getElementById('rpm').value);
-  let alt = parseFloat(document.getElementById('alt').value);
-  let da  = parseFloat(document.getElementById('da').value);
+  const alt = document.getElementById('alt').value.trim();
+  const da  = 
+});
 
-  // Vérifier si valeurs minimales dispo
-  if (isNaN(map) || isNaN(rpm) || (isNaN(alt) && isNaN(da))) {
-    document.getElementById('result').style.display="none";
-    return;
+document.querySelectorAll('#map, #rpm, #alt, #da, #oat').forEach(el => {
+  el.addEventListener('input', (e) => {
+    const allowed = /^-?[0-9]*[\.,]?[0-9]*$/;
+    if (!allowed.test(e.target.value)) {
+      e.target.value = e.target.value.replace(/[^0-9\.,-]/g, '');
+    }
+    if (el.value.length > el.maxLength) {
+      el.value = el.value.slice(0, el.maxLength);
+    }
+    checkInputsAndPrepare();
+  });
+});
+
+
+
+
+
+document.getElementById('da').addEventListener('input', (e) => {
+  if (e.target.value.length === 1) {
+    document.getElementById('alt').value = "";
+    document.getElementById('oat').value = "";
   }
-
-  const daUsed = !isNaN(da) ? da : alt;
-
-  const pctStock = getPercentPower(rpm,map);
-  const loss = getLoss(daUsed);
-
-  const hpStockCorr = 180*pctStock/100 - loss;
-  const hp = hpStockCorr * (225/180);
-  const pct = (hp/hpMax)*100;
-
-  const ffRop = hp*bsfc/6*3.785;
-  const ffLop = pct<=60?(ffRop*0.9).toFixed(1):"-";
-
-  document.getElementById("pwr").innerHTML = isNaN(pct) ? "N/A" : "<b>"+pct.toFixed(1)+"</b> %";
-  document.getElementById("hp").innerHTML = isNaN(hp) ? "N/A" : "<b>"+hp.toFixed(1)+"</b> hp";
-  document.getElementById("rop").innerHTML = isNaN(ffRop) ? "ROP N/A L/h" : "ROP <b>"+ffRop.toFixed(1)+"</b> L/h";
-  document.getElementById("lop").innerHTML = (ffLop!="-") ? "LOP <b>"+ffLop+"</b> L/h" : "LOP <b>N/A</b> L/h";
-
-  document.getElementById('result').style.display="table";
-  document.querySelector('#powerBar').parentElement.parentElement.style.display = 'block';
-  const bar = document.getElementById('powerBar');
-  bar.style.width = pct.toFixed(0) + "%";
-  if (pct < 60) bar.style.background = "green";
-  else if (pct < 75) bar.style.background = "orange";
-  else bar.style.background = "red";
-}
+});
 
 
-function calculate() {
-  doCalculation(); // On fait juste le calcul, sans updateFields
-}
+['alt', 'oat'].forEach(id => {
+  document.getElementById(id).addEventListener('input', () => {
+    const alt = parseFloat(document.getElementById('alt').value);
+    const oat = parseFloat(document.getElementById('oat').value);
 
+    if (!isNaN(alt) && !isNaN(oat)) {
+      document.getElementById('da').value = calcDA(alt, oat).toFixed(0);
+    }
 
-  </script>
+    updateFields(); // On relance toute la logique
+  });
+});
+});
+
+</script>
+
 </body>
 </html>
