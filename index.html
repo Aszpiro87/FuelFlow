@@ -168,6 +168,8 @@ function doCalculation() {
   document.getElementById("lop").innerHTML = (ffLop!="-") ? "LOP <b>"+ffLop+"</b> L/h" : "LOP <b>N/A</b> L/h";
 
   document.getElementById('result').style.display="table";
+  lastCalcValues = getCurrentValues();
+  checkReadyToCalculate();
   document.querySelector('.garmin-button').style.background = '#2a2a2a';
   document.querySelector('#powerBar').parentElement.parentElement.style.display = 'block';
   const bar = document.getElementById('powerBar');
@@ -185,19 +187,36 @@ function calculate() {
 
   
 
-function checkReadyToCalculate() {
-  const map = parseFloat(document.getElementById('map').value);
-  const rpm = parseFloat(document.getElementById('rpm').value);
-  const alt = parseFloat(document.getElementById('alt').value);
-  const da  = parseFloat(document.getElementById('da').value);
-  const btn = document.querySelector('.garmin-button');
+let lastCalcValues = null;
 
-  // Condition minimale : MAP et RPM et (Alt ou DA)
-  if (!isNaN(map) && !isNaN(rpm) && (!isNaN(alt) || !isNaN(da))) {
-    // Si le tableau n'est pas encore affiché
-    if (document.getElementById('result').style.display === "none") {
+function getCurrentValues() {
+  return {
+    map: parseFloat(document.getElementById('map').value) || null,
+    rpm: parseFloat(document.getElementById('rpm').value) || null,
+    alt: parseFloat(document.getElementById('alt').value) || null,
+    da:  parseFloat(document.getElementById('da').value)  || null
+  };
+}
+
+function valuesEqual(v1, v2) {
+  if (!v1 || !v2) return false;
+  return v1.map===v2.map && v1.rpm===v2.rpm && v1.alt===v2.alt && v1.da===v2.da;
+}
+
+function checkReadyToCalculate() {
+  const btn = document.querySelector('.garmin-button');
+  const v = getCurrentValues();
+
+  if (!isNaN(v.map) && !isNaN(v.rpm) && (!isNaN(v.alt) || !isNaN(v.da))) {
+    if (!lastCalcValues || !valuesEqual(v, lastCalcValues)) {
       btn.style.background = "green";
+    } else {
+      btn.style.background = "#2a2a2a";
     }
+  } else {
+    btn.style.background = "#2a2a2a";
+  }
+}
   } else {
     btn.style.background = "#2a2a2a";
   }
@@ -214,7 +233,6 @@ document.getElementById('da').addEventListener('input', function() {
   lastChanged = "da"; updateFields();
 });
 </script>
-
 <script>
 ['map','rpm','alt','oat','da'].forEach(id=>{
   document.getElementById(id).addEventListener('input', checkReadyToCalculate);
