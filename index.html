@@ -170,7 +170,6 @@ function doCalculation() {
   document.getElementById('result').style.display="table";
   lastCalcValues = getCurrentValues();
   checkReadyToCalculate();
-  document.querySelector('.garmin-button').style.background = '#2a2a2a';
   document.querySelector('#powerBar').parentElement.parentElement.style.display = 'block';
   const bar = document.getElementById('powerBar');
   bar.style.width = pct.toFixed(0) + "%";
@@ -217,10 +216,6 @@ function checkReadyToCalculate() {
     btn.style.background = "#2a2a2a";
   }
 }
-  } else {
-    btn.style.background = "#2a2a2a";
-  }
-}
 </script>
 <script>
 document.getElementById('alt').addEventListener('input', function() {
@@ -233,6 +228,7 @@ document.getElementById('da').addEventListener('input', function() {
   lastChanged = "da"; updateFields();
 });
 </script>
+
 <script>
 ['map','rpm','alt','oat','da'].forEach(id=>{
   document.getElementById(id).addEventListener('input', checkReadyToCalculate);
