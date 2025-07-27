@@ -29,6 +29,14 @@ document.querySelectorAll('#map, #rpm, #alt, #da, #oat').forEach(el => {
   });
 });
 
+
+document.getElementById('da').addEventListener('input', (e) => {
+  if (e.target.value.length === 1) {
+    document.getElementById('alt').value = "";
+    document.getElementById('oat').value = "";
+  }
+});
+
 </script>
 
   <meta charset="UTF-8">
@@ -248,6 +256,14 @@ document.querySelectorAll('#map, #rpm, #alt, #da, #oat').forEach(el => {
     }
     checkInputsAndPrepare();
   });
+});
+
+
+document.getElementById('da').addEventListener('input', (e) => {
+  if (e.target.value.length === 1) {
+    document.getElementById('alt').value = "";
+    document.getElementById('oat').value = "";
+  }
 });
 
 </script>
