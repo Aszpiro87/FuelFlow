@@ -183,8 +183,9 @@ const daUsed = !isNaN(daVal) ? daVal : (!isNaN(altVal) ? altVal : NaN);
 
 
 function calculate() {
-  doCalculation();       // Effectue le calcul
-  checkReadyToCalculate(); // Met immédiatement à jour l'état du bouton
+  doCalculation();       
+  lastCalcValues = getCurrentValues(); // Force la mise à jour mémoire
+  checkReadyToCalculate(); 
 }
 
 
