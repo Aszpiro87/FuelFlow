@@ -317,14 +317,24 @@ function validateField(id) {
 }
 
 function allFieldsValid() {
+  const ids = ['map','rpm','alt','da','oat'];
+  let anyInvalid = false;
+
+  ids.forEach(id => validateField(id));
+
+  ids.forEach(id=>{
+    const el = document.getElementById(id);
+    if (el.style.color === "red") {
+      anyInvalid = true;
+    }
+  });
+
   const mapOk = validateField('map');
   const rpmOk = validateField('rpm');
   const altOk = validateField('alt');
   const daOk  = validateField('da');
-  const oatOk = validateField('oat');
 
-  // Il faut que MAP et RPM soient valides
-  // et qu'au moins Alt OU DA soit valide
+  if (anyInvalid) return false;
   return mapOk && rpmOk && (altOk || daOk);
 }
 
@@ -358,7 +368,6 @@ doCalculation = function() {
   oldDoCalc();
 };
 </script>
-
 <script>
 function formatThousands(value) {
   value = value.replace(/[^0-9-]/g, '');
