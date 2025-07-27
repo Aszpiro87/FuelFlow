@@ -238,7 +238,6 @@ document.getElementById('da').addEventListener('input', function() {
   document.getElementById(id).addEventListener('input', checkReadyToCalculate);
 });
 </script>
-
 <script>
 // Validation MAP -> XX.X automatique
 document.getElementById('map').addEventListener('input', function(e) {
@@ -290,6 +289,75 @@ document.getElementById('da').addEventListener('input', function(e) {
   this.value = v;
   lastChanged = "da"; updateFields(); checkReadyToCalculate();
 });
+</script>
+
+<script>
+const ranges = {
+  map:  [19, 30],
+  rpm:  [2000, 2700],
+  alt:  [0, 12000],
+  oat:  [-40, 50],
+  da:   [-2000, 16000]
+};
+
+function inRange(val, min, max) {
+  return !isNaN(val) && val >= min && val <= max;
+}
+
+function validateField(id) {
+  const el = document.getElementById(id);
+  let val = parseFloat(el.value);
+  let [min, max] = ranges[id] || [null, null];
+  if (min !== null && (!inRange(val, min, max))) {
+    el.style.color = "red";
+    return false;
+  } else {
+    el.style.color = "white";
+    return true;
+  }
+}
+
+function allFieldsValid() {
+  const mapOk = validateField('map');
+  const rpmOk = validateField('rpm');
+  const altOk = validateField('alt');
+  const daOk  = validateField('da');
+  const oatOk = validateField('oat');
+
+  // Il faut que MAP et RPM soient valides
+  // et qu'au moins Alt OU DA soit valide
+  return mapOk && rpmOk && (altOk || daOk);
+}
+
+// On surcharge checkReadyToCalculate pour inclure la validation
+const oldCheck = checkReadyToCalculate;
+checkReadyToCalculate = function() {
+  ['map','rpm','alt','oat','da'].forEach(validateField);
+
+  const btn = document.querySelector('.garmin-button');
+  if (!allFieldsValid()) {
+    btn.style.background = "#2a2a2a";
+    return;
+  }
+
+  const v = getCurrentValues();
+  if (!lastCalcValues || !valuesEqual(v, lastCalcValues)) {
+    btn.style.background = "green";
+  } else {
+    btn.style.background = "#2a2a2a";
+  }
+}
+
+// On met à jour doCalculation pour bloquer si hors plage
+const oldDoCalc = doCalculation;
+doCalculation = function() {
+  if (!allFieldsValid()) {
+    document.getElementById('result').style.display = "none";
+    document.querySelector('#powerBar').parentElement.parentElement.style.display = 'none';
+    return;
+  }
+  oldDoCalc();
+};
 </script>
 </body>
 </html>
