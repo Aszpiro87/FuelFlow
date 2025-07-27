@@ -10,7 +10,17 @@
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('service-worker.js');
     }
-  </script>
+  
+function toggleSign(id) {
+  const el = document.getElementById(id);
+  if (el.value.startsWith('-')) {
+    el.value = el.value.slice(1);
+  } else {
+    el.value = '-' + el.value;
+  }
+  checkReadyToCalculate();
+}
+</script>
 <meta charset="utf-8"/>
 <title>Racing IO-360-B1B</title>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
@@ -37,12 +47,9 @@
 <input id="map" inputmode="text" step="any" type="text"/>
 <label for="rpm"><b>RPM</b></label>
 <input id="rpm" inputmode="text" step="any" type="text"/>
-<label for="alt"><b>Altitude</b> ft</label>
-<input id="alt" inputmode="text" pattern="-?[0-9]*[.,]?[0-9]*" step="any" type="text"/>
-<label for="oat"><b>OAT</b> °C</label>
-<input id="oat" inputmode="text" pattern="-?[0-9]*[.,]?[0-9]*" step="any" type="text"/>
-<label for="da"><b>Density Altitude</b> ft</label>
-<input id="da" inputmode="text" pattern="-?[0-9]*[.,]?[0-9]*" step="any" type="text"/>
+<label for="alt"><b>Altitude ft</b></label><div style="display:flex;"><input id="alt" inputmode="tel" type="text" style="flex:1;border-top-right-radius:0;border-bottom-right-radius:0;"><button type="button" onclick="toggleSign('alt')" style="background:#1a1a1a;border:1px solid #444;border-left:none;border-top-right-radius:6px;border-bottom-right-radius:6px;color:#fff;width:30px;cursor:pointer;font-size:14px;">±</button></div>
+<label for="oat"><b>OAT °C</b></label><div style="display:flex;"><input id="oat" inputmode="tel" type="text" style="flex:1;border-top-right-radius:0;border-bottom-right-radius:0;"><button type="button" onclick="toggleSign('oat')" style="background:#1a1a1a;border:1px solid #444;border-left:none;border-top-right-radius:6px;border-bottom-right-radius:6px;color:#fff;width:30px;cursor:pointer;font-size:14px;">±</button></div>
+<label for="da"><b>Density Altitude ft</b></label><div style="display:flex;"><input id="da" inputmode="tel" type="text" style="flex:1;border-top-right-radius:0;border-bottom-right-radius:0;"><button type="button" onclick="toggleSign('da')" style="background:#1a1a1a;border:1px solid #444;border-left:none;border-top-right-radius:6px;border-bottom-right-radius:6px;color:#fff;width:30px;cursor:pointer;font-size:14px;">±</button></div>
 </div>
 <div class="garmin-button" onclick="calculate()">
 <img alt="Calculate" src="fuel_flow_icon.png"/>
