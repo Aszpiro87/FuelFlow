@@ -224,6 +224,7 @@ function doCalculation() {
   document.getElementById("lop").innerHTML = (ffLop!="-") ? "LOP <b>"+ffLop+"</b> L/h" : "LOP <b>N/A</b> L/h";
 
   document.getElementById('result').style.display="table";
+  document.querySelector('.garmin-button').classList.remove('ready');
   document.querySelector('#powerBar').parentElement.parentElement.style.display = 'block';
   const bar = document.getElementById('powerBar');
   bar.style.width = pct.toFixed(0) + "%";
