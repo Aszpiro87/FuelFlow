@@ -37,11 +37,11 @@
       <label for="rpm"><b>RPM</b></label>
       <input id="rpm" type="text" inputmode="decimal" step="any">
       <label for="alt"><b>Altitude</b> ft</label>
-<input id="alt" type="text" inputmode="decimal" step="any" onchange="lastChanged='alt'; updateFields();">
+<input id="alt" type="text" inputmode="decimal" step="any" pattern="-?[0-9]*[.,]?[0-9]*" onchange="lastChanged='alt'; updateFields();">
 <label for="oat"><b>OAT</b> °C</label>
-<input id="oat" type="text" inputmode="decimal" step="any" onchange="lastChanged='oat'; updateFields();">
+<input id="oat" type="text" inputmode="decimal" step="any" pattern="-?[0-9]*[.,]?[0-9]*" onchange="lastChanged='oat'; updateFields();">
 <label for="da"><b>Density Altitude</b> ft</label>
-<input id="da" type="text" inputmode="decimal" step="any" onchange="lastChanged='da'; updateFields();">
+<input id="da" type="text" inputmode="decimal" step="any" pattern="-?[0-9]*[.,]?[0-9]*" onchange="lastChanged='da'; updateFields();">
     </div>
     <div class="garmin-button" onclick="calculate()">
       <img src="fuel_flow_icon.png" alt="Calculate">
@@ -120,7 +120,7 @@ function updateFields() {
     if (lastChanged === "da")  { document.getElementById('alt').value = ""; document.getElementById('oat').value = ""; }
     return;
   }
-  if (filled === 2) {
+  if (filled === 2 && lastChanged) {
     if (!isNaN(alt) && !isNaN(oat) && isNaN(da)) document.getElementById('da').value = calcDA(alt,oat).toFixed(0);
     if (!isNaN(da)  && !isNaN(oat) && isNaN(alt)) document.getElementById('alt').value = calcAlt(da,oat).toFixed(0);
     if (!isNaN(alt) && !isNaN(da)  && isNaN(oat)) document.getElementById('oat').value = calcOAT(alt,da).toFixed(1);
