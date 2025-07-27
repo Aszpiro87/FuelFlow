@@ -168,6 +168,13 @@ function doCalculation() {
   document.getElementById("lop").innerHTML = (ffLop!="-") ? "LOP <b>"+ffLop+"</b> L/h" : "LOP <b>N/A</b> L/h";
 
   document.getElementById('result').style.display="table";
+  // Affiche ou cache la barre selon l'état du tableau
+  const barContainer = document.querySelector('#powerBar').parentElement.parentElement;
+  if (document.getElementById('result').style.display === 'table') {
+    barContainer.style.display = 'block';
+  } else {
+    barContainer.style.display = 'none';
+  }
   lastCalcValues = getCurrentValues();
   checkReadyToCalculate();
   document.querySelector('#powerBar').parentElement.parentElement.style.display = 'block';
@@ -232,7 +239,6 @@ document.getElementById('da').addEventListener('input', function() {
   lastChanged = "da"; updateFields();
 });
 </script>
-
 <script>
 ['map','rpm','alt','oat','da'].forEach(id=>{
   document.getElementById(id).addEventListener('input', checkReadyToCalculate);
