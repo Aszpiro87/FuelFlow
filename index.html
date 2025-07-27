@@ -15,6 +15,20 @@ document.querySelectorAll('#map, #rpm, #alt, #da').forEach(el => {
     checkInputsAndPrepare();
   });
 });
+
+document.querySelectorAll('#map, #rpm, #alt, #da, #oat').forEach(el => {
+  el.addEventListener('input', (e) => {
+    const allowed = /^-?[0-9]*[\.,]?[0-9]*$/;
+    if (!allowed.test(e.target.value)) {
+      e.target.value = e.target.value.replace(/[^0-9\.,-]/g, '');
+    }
+    if (el.value.length > el.maxLength) {
+      el.value = el.value.slice(0, el.maxLength);
+    }
+    checkInputsAndPrepare();
+  });
+});
+
 </script>
 
   <meta charset="UTF-8">
@@ -44,15 +58,15 @@ document.querySelectorAll('#map, #rpm, #alt, #da').forEach(el => {
   <main>
     <div class="form-grid">
       <label for="map"><b>MAP</b> inHg</label>
-      <input id="map" type="text" inputmode="text" step="any">
+      <input id="map" type="text" inputmode="text" step="any" maxlength="4" pattern="[-0-9\.,]*">
       <label for="rpm"><b>RPM</b></label>
-      <input id="rpm" type="text" inputmode="text" step="any">
+      <input id="rpm" type="text" inputmode="text" step="any" maxlength="4" pattern="[-0-9\.,]*">
       <label for="alt"><b>Altitude</b> ft</label>
-<input id="alt" type="text" inputmode="text" step="any" pattern="-?[0-9]*[.,]?[0-9]*" onchange="lastChanged='alt'; updateFields();">
+<input id="alt" type="text" inputmode="text" step="any" pattern="-?[0-9]*[.,]?[0-9]*" onchange="lastChanged='alt'; updateFields();" maxlength="5" pattern="[-0-9\.,]*">
 <label for="oat"><b>OAT</b> °C</label>
-<input id="oat" type="text" inputmode="text" step="any" pattern="-?[0-9]*[.,]?[0-9]*" onchange="lastChanged='oat'; updateFields();">
+<input id="oat" type="text" inputmode="text" step="any" pattern="-?[0-9]*[.,]?[0-9]*" onchange="lastChanged='oat'; updateFields();" maxlength="3" pattern="[-0-9\.,]*">
 <label for="da"><b>Density Altitude</b> ft</label>
-<input id="da" type="text" inputmode="text" step="any" pattern="-?[0-9]*[.,]?[0-9]*" onchange="lastChanged='da'; updateFields();">
+<input id="da" type="text" inputmode="text" step="any" pattern="-?[0-9]*[.,]?[0-9]*" onchange="lastChanged='da'; updateFields();" maxlength="5" pattern="[-0-9\.,]*">
     </div>
     <div class="garmin-button" onclick="calculate()">
       <img src="fuel_flow_icon.png" alt="Calculate">
@@ -222,6 +236,20 @@ document.querySelectorAll('#map, #rpm, #alt, #da').forEach(el => {
     checkInputsAndPrepare();
   });
 });
+
+document.querySelectorAll('#map, #rpm, #alt, #da, #oat').forEach(el => {
+  el.addEventListener('input', (e) => {
+    const allowed = /^-?[0-9]*[\.,]?[0-9]*$/;
+    if (!allowed.test(e.target.value)) {
+      e.target.value = e.target.value.replace(/[^0-9\.,-]/g, '');
+    }
+    if (el.value.length > el.maxLength) {
+      el.value = el.value.slice(0, el.maxLength);
+    }
+    checkInputsAndPrepare();
+  });
+});
+
 </script>
 
 </body>
