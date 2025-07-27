@@ -148,6 +148,7 @@ function doCalculation() {
   if (isNaN(map) || isNaN(rpm) || (isNaN(alt) && isNaN(da))) {
     document.getElementById('result').style.display="none";
     return;
+  document.querySelector('#powerBar').parentElement.parentElement.style.display = 'none';
   }
 
   const daUsed = !isNaN(da) ? da : alt;
@@ -168,13 +169,6 @@ function doCalculation() {
   document.getElementById("lop").innerHTML = (ffLop!="-") ? "LOP <b>"+ffLop+"</b> L/h" : "LOP <b>N/A</b> L/h";
 
   document.getElementById('result').style.display="table";
-  // Affiche ou cache la barre selon l'état du tableau
-  const barContainer = document.querySelector('#powerBar').parentElement.parentElement;
-  if (document.getElementById('result').style.display === 'table') {
-    barContainer.style.display = 'block';
-  } else {
-    barContainer.style.display = 'none';
-  }
   lastCalcValues = getCurrentValues();
   checkReadyToCalculate();
   document.querySelector('#powerBar').parentElement.parentElement.style.display = 'block';
