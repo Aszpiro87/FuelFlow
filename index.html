@@ -151,8 +151,8 @@ function doCalculation() {
   return;
   }
 
-  const daVal = getNumericValue(document.getElementById('da').value);
-const altVal = getNumericValue(document.getElementById('alt').value);
+  const daVal = parseFloat(document.getElementById('da').value);
+const altVal = parseFloat(document.getElementById('alt').value);
 const daUsed = !isNaN(daVal) ? daVal : (!isNaN(altVal) ? altVal : NaN);
 
   const pctStock = getPercentPower(rpm,map);
@@ -323,18 +323,10 @@ function allFieldsValid() {
   const rpmOk = validateField('rpm');
   const altOk = validateField('alt');
   const daOk  = validateField('da');
-  validateField('oat');
+  const oatOk = validateField('oat');
 
-  // Vérifier si une case est rouge
-  const ids = ['map','rpm','alt','da','oat'];
-  for (let id of ids) {
-    const el = document.getElementById(id);
-    if (el.style.color === "red") {
-      return false;
-    }
-  }
-
-  // Règle : MAP et RPM valides + (ALT ou DA valide)
+  // Il faut que MAP et RPM soient valides
+  // et qu'au moins Alt OU DA soit valide
   return mapOk && rpmOk && (altOk || daOk);
 }
 
@@ -367,34 +359,6 @@ doCalculation = function() {
   }
   oldDoCalc();
 };
-</script>
-<script>
-function formatThousands(value) {
-  value = value.replace(/[^0-9-]/g, '');
-  let negative = value.startsWith('-');
-  if (negative) value = '-' + value.slice(1).replace(/-/g, '');
-  let num = negative ? value.slice(1) : value;
-  if (num.length <= 3) return value;
-  let main = num.slice(0, num.length-3);
-  let last = num.slice(-3);
-  return (negative ? '-' : '') + main + ' ' + last;
-}
-
-function getNumericValue(str) {
-  return parseFloat(str.replace(/[^0-9-]/g, ''));
-}
-
-['alt','da'].forEach(id=>{
-  const el = document.getElementById(id);
-  el.addEventListener('input', function() {
-    let raw = this.value.replace(/ /g,'');
-    let formatted = formatThousands(raw);
-    this.value = formatted;
-    lastChanged = id;
-    updateFields();
-    checkReadyToCalculate();
-  });
-});
 </script>
 </body>
 </html>
