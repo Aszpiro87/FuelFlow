@@ -305,7 +305,7 @@ function inRange(val, min, max) {
 
 function validateField(id) {
   const el = document.getElementById(id);
-  let val = parseFloat(el.value);
+  let val = getNumericValue(el.value);
   let [min, max] = ranges[id] || [null, null];
   if (min !== null && (!inRange(val, min, max))) {
     el.style.color = "red";
