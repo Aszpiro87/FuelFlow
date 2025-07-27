@@ -317,24 +317,22 @@ function validateField(id) {
 }
 
 function allFieldsValid() {
-  const ids = ['map','rpm','alt','da','oat'];
-  let anyInvalid = false;
-
-  ids.forEach(id => validateField(id));
-
-  ids.forEach(id=>{
-    const el = document.getElementById(id);
-    if (el.style.color === "red") {
-      anyInvalid = true;
-    }
-  });
-
   const mapOk = validateField('map');
   const rpmOk = validateField('rpm');
   const altOk = validateField('alt');
   const daOk  = validateField('da');
+  validateField('oat');
 
-  if (anyInvalid) return false;
+  // Vérifier si une case est rouge
+  const ids = ['map','rpm','alt','da','oat'];
+  for (let id of ids) {
+    const el = document.getElementById(id);
+    if (el.style.color === "red") {
+      return false;
+    }
+  }
+
+  // Règle : MAP et RPM valides + (ALT ou DA valide)
   return mapOk && rpmOk && (altOk || daOk);
 }
 
